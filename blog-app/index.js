@@ -4,7 +4,7 @@ const port = 3000;
 const app = express();
 
 app.set("view engine" , "ejs");
-console.log(app.get("view engine"));
+app.use(express.urlencoded({extended: false})); //request body icindeki name leri oxumaq ucun istifade olunur 
 
 const path = require("path");
 const userRoutes = require("./routes/user");

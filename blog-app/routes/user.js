@@ -2,50 +2,82 @@ const express = require("express");
 const router =  express.Router();
 // const path = require("path");
 
-const data = {
-    title: "Popular Courses",
-    categories: ["Web Development" , "Programming" , "Mobil Development" , "Data Analysis"],
-    blogs: [
-        {
-            blogid: 1,
-            baslig: "Full Stack Web Development",
-            aciglama: "Sıfırdan ileri seviyeye 'Web Geliştirme': Html,Css,Sass, Flexbox,Grid,Bootstrap,Javascript,Angular,Firebase,Asp.Net Core",
-            image: "1.jpeg",
-            homePage: true,
-            confirm: true
-        },
-        {
-            blogid: 2,
-            baslig: "Python programming",
-            aciglama: "Sıfırdan ileri seviyeye Python Dersleri . Veritabani , Veri Analzi, Bot Yazimi,Web Gelistirme(Django)",
-            image: "2.jpeg",
-            homePage: true,
-            confirm: false
-        },
-        {
-            blogid: 3,
-            baslig: "Zero to Advanced JavaScript Course",
-            aciglama: "Modern javascript dersleri ile (ES6 & ES7+) Nodejs, Angular, React ve VueJs için sağlam bir temel oluşturun.",
-            image: "3.jpeg",
-            homePage: false,
-            confirm: true
-        }
-    ]
-};
+const db = require("../data/db");
 
+router.use("/blogs/category/:categoryid" ,async (req, res) =>{
+    const id = req.params.categoryid;
+    try{
+        const [blogs, ] = await db.execute("select * from blog where categoryid=?" , [id]);
+        const categories = await db.execute("select * from category");
+        // console.log(blogs[0]);
+        res.render("users/blogs" , {
+            title: "All Courses",
+            categories: categories[0],
+            blogs: blogs,
+            selectedcategory: id
+        });
+    }
+    catch(err) {
+        console.log(err);   
+    }
+} )
 
-router.use("/blogs/:blogid" , (req, res, next) => {
+router.use("/blogs/:blogid" , async (req, res, next) => {
     // console.log(__dirname);
     // console.log(__filename);
-    res.render("users/blog-details");
+    const id = req.params.blogid;
+    // console.log(id); 
+    try {
+        const [blogs, ] = await db.execute("select * from blog where blogid=?" , [id]);
+        console.log(blogs[0]);
+
+        const blog = blogs[0];
+
+        if (blog) {
+            return  res.render("users/blog-details" , {
+                    title: blog.baslig,
+                    blog: blog
+                    });
+        }
+        res.redirect("/");
+    }
+    catch(err){
+        console.log(err);
+    }
 });
 
-router.use("/blogs" , (req, res) => {
-    res.render("users/blogs" , data);
+router.use("/blogs" , async (req, res) => {
+    try{
+        const blogs = await db.execute("select * from blog where confirm=1");
+        const categories = await db.execute("select * from category");
+        // console.log(blogs[0]);
+        res.render("users/blogs" , {
+            title: "All Courses",
+            categories: categories[0],
+            blogs: blogs[0],
+            selectedcategory: null
+        });
+    }
+    catch(err) {
+        console.log(err);
+    }
 });
 
-router.use("/" , (req, res) => {
-    res.render("users/index" , data);
+router.use("/" , async (req, res) => {
+    try{
+        const blogs = await db.execute("select * from blog where confirm=1 and homePage=1");
+        const categories = await db.execute("select * from category");
+        // console.log(blogs[0]);
+        res.render("users/index" , {
+            title: "Popular Courses",
+            categories: categories[0],
+            blogs: blogs[0],
+            selectedcategory: null
+        });
+    }
+    catch(err) {
+        console.log(err);
+    } 
 });
 
 module.exports = router;
