@@ -10,8 +10,9 @@
     <div class="container mt-3">
         <div class="row">
             <div class="col-md-12 mt-3">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     <input type="hidden" name="blogid" value="<%= blog.blogid %>">
+                    <input type="hidden" name="image" value="<%= blog.image %>">
                     <div class="row mb-3">
                         <label for="baslik" class="col-sm-2 col-form-label">Title</label>
                         <div class="col-sm-8">
@@ -19,15 +20,22 @@
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <label for="altbaslig" class="col-sm-2 col-form-label">Altbaslig</label>
+                        <div class="col-sm-8">
+                            <textarea name="altbaslig" class="form-control" rows="5"><%= blog.altbaslig %></textarea>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <label for="aciglama" class="col-sm-2 col-form-label">Aciglama</label>
                         <div class="col-sm-8">
-                            <textarea name="aciglama" class="form-control" rows="10"><%= blog.aciglama %></textarea>
+                            <textarea id="editor" name="aciglama" class="form-control" rows="10"><%= blog.aciglama %></textarea>
                         </div>
                     </div>
                     <div class="row mb-3">
                         <label for="image" class="col-sm-2 col-form-label">Image</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="image" name="image" value="<%= blog.image %>">
+                            <img src="/static/images/<%= blog.image %>" alt="#" style="width: 120px;">
+                            <input type="file" class="form-control" id="image" name="image">
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -36,10 +44,10 @@
                             <select name="category" id="category" class="form-control">
                                 <option value="-1" selected>Secin</option>
                                 <% categories.forEach(category => { %>
-                                    <% if (category.categoryid == blog.categoryid) { %>
-                                        <option value="<%= category.categoryid %>" selected><%= category.name %></option>
+                                    <% if (category.dataValues.categoryid == blog.categoryid) { %>
+                                        <option value="<%= category.dataValues.categoryid %>" selected><%= category.dataValues.name %></option>
                                     <%} else { %>
-                                        <option value="<%= category.categoryid %>"><%= category.name %></option>
+                                        <option value="<%= category.dataValues.categoryid %>"><%= category.dataValues.name %></option>
                                     <% }  %>
                                     
                                 <% }) %>
@@ -49,7 +57,7 @@
                     <div class="row mb-3">
                         <div class="col-sm-8 offset-sm-2">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="homepage" name="hoempage" <%= blog.homePage ? 'checked' : '' %> />
+                                <input class="form-check-input" type="checkbox" id="homepage" name="homepage" <%= blog.homePage ? 'checked' : '' %> />
                                 <label class="form-check-label" for="homepage">
                                   HomePage
                                 </label>
@@ -75,5 +83,15 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <script>
+        ClassicEditor
+            .create( document.querySelector( '#editor' ) )
+            .catch( error => {
+                console.error( error );
+            } );
+    </script>
+
 </body>
 </html>

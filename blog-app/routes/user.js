@@ -2,17 +2,28 @@ const express = require("express");
 const router =  express.Router();
 // const path = require("path");
 
-const db = require("../data/db");
+// const db = require("../data/db");
+
+const Blog = require("../models/blog");
+const Category = require("../models/category");
+
+const { Op } = require("sequelize");
 
 router.use("/blogs/category/:categoryid" ,async (req, res) =>{
     const id = req.params.categoryid;
     try{
-        const [blogs, ] = await db.execute("select * from blog where categoryid=?" , [id]);
-        const categories = await db.execute("select * from category");
+        const blogs = await Blog.findAll({
+            where: {
+                categoryid: id,
+                confirm: true
+            },
+            raw: true
+        });
+        const categories = await Category.findAll({raw: true});
         // console.log(blogs[0]);
         res.render("users/blogs" , {
-            title: "All Courses",
-            categories: categories[0],
+            title: "Courses",
+            categories: categories,
             blogs: blogs,
             selectedcategory: id
         });
@@ -28,10 +39,15 @@ router.use("/blogs/:blogid" , async (req, res, next) => {
     const id = req.params.blogid;
     // console.log(id); 
     try {
-        const [blogs, ] = await db.execute("select * from blog where blogid=?" , [id]);
-        console.log(blogs[0]);
+        const blog = await Blog.findOne({
+            where: {
+                blogid: id
+            },
+            raw: true
+        });
+        // console.log(blogs[0]);
 
-        const blog = blogs[0];
+        // const blog = blogs[0];
 
         if (blog) {
             return  res.render("users/blog-details" , {
@@ -48,13 +64,20 @@ router.use("/blogs/:blogid" , async (req, res, next) => {
 
 router.use("/blogs" , async (req, res) => {
     try{
-        const blogs = await db.execute("select * from blog where confirm=1");
-        const categories = await db.execute("select * from category");
+        const blogs = await Blog.findAll({
+            where: {
+                confirm: {
+                    [Op.eq]: true // operator yardimi ile confirm=1 yazirig
+                }
+            },
+            raw: true
+        })
+        const categories = await Category.findAll({raw: true});
         // console.log(blogs[0]);
         res.render("users/blogs" , {
             title: "All Courses",
-            categories: categories[0],
-            blogs: blogs[0],
+            categories: categories,
+            blogs: blogs,
             selectedcategory: null
         });
     }
@@ -65,13 +88,21 @@ router.use("/blogs" , async (req, res) => {
 
 router.use("/" , async (req, res) => {
     try{
-        const blogs = await db.execute("select * from blog where confirm=1 and homePage=1");
-        const categories = await db.execute("select * from category");
+        const blogs = await Blog.findAll({
+            where: {
+                [Op.and]: [
+                    {homepage: true},
+                    {confirm: true}
+                ]
+            },
+            raw: true
+        });
+        const categories = await Category.findAll({ raw: true });
         // console.log(blogs[0]);
         res.render("users/index" , {
             title: "Popular Courses",
-            categories: categories[0],
-            blogs: blogs[0],
+            categories: categories,
+            blogs: blogs,
             selectedcategory: null
         });
     }

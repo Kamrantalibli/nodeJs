@@ -1,15 +1,39 @@
-const mysql = require("mysql2");
 const config = require("../config");
 
-let connection = mysql.createConnection(config.db);
-
-connection.connect((err) => {
-  if (err) {
-    return  console.log(err);
+//New version...
+const Sequelize = require("sequelize");
+const sequelize = new Sequelize(config.db.database, config.db.user, config.db.password, {
+  dialect: "mysql",
+  host: config.db.host
+});
+const connect = async ()=>{
+  try {
+    await sequelize.authenticate();
+    console.log("mysql server connected");
+  } 
+  catch (err) {
+    console.log("Cennection Error ", err);
   }
-  console.log("mysql server conected");
-})
+}
+connect();
 
-module.exports = connection.promise();
+module.exports = sequelize; 
 
-//Promise, async-await => async
+
+
+// Old version...
+
+// const mysql = require("mysql2");
+
+// let connection = mysql.createConnection(config.db);
+
+// connection.connect((err) => {
+//   if (err) {
+//     return  console.log(err);
+//   }
+//   console.log("mysql server conected");
+// })
+
+// module.exports = connection.promise();
+
+// //Promise, async-await => async
