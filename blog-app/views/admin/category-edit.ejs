@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-md-12 mt-3">
                 <form method="post">
-                    <input type="hidden" name="categoryid" value="<%= category.categoryid %>">
+                    <input type="hidden" name="categoryid" value="<%= category.id %>">
                     <div class="row mb-3">
                         <label for="name" class="col-sm-2 col-form-label">Name</label>
                         <div class="col-sm-8">
@@ -25,6 +25,42 @@
                     </div>
                 </form>
             </div>
+            <p>
+              Blog Numbers: <%= countBlog %>
+            </p>
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">Id</th>
+                        <th style="width: 150px;">Image</th>
+                        <th>Title</th>
+                        <th style="width: 190px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% blogs.forEach(blog => { %>
+                        <tr>
+                            <td>#<%= blog.dataValues.id %></td>
+                            <td>
+                                <img src="/static/images/<%= blog.dataValues.image %>" class="img-fluid" alt="">
+                            </td>
+                            <td>
+                                <%= blog.dataValues.baslig %>
+                            </td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" href="/admin/blogs/<%= blog.dataValues.id %>">Edit</a>
+
+                                <form style="display: inline-block;" action="/admin/categories/remove" method="post">
+                                    <input type="hidden" name="blogid" value="<%= blog.id %>">
+                                    <input type="hidden" name="categoryid" value="<%= category.id %>">
+                                    <button class="btn btn-sm btn-danger" type="submit">Remove Kategory</button>
+                                </form>
+
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
         </div>
     </div>
 </body>

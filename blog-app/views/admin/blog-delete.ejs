@@ -15,7 +15,7 @@
                         <b><%= blog.baslig %></b> <br> adli blogu silmek isteyirsiniz?
                     </p>
                     <form method="post">
-                        <input type="hidden" name="blogid" value="<%= blog.blogid %>">
+                        <input type="hidden" name="blogid" value="<%= blog.id %>">
                         <button class="btn btn-danger" type="submit">Delete</button>
                         <a href="/admin/blogs" class="btn btn-primary">Cancel</a>
                     </form>
