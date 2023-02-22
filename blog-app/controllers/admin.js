@@ -99,12 +99,12 @@ exports.post_blog_create = async (req ,res) => {
     const homepage = req.body.homepage == "on" ? 1 : 0;
     const confirm = req.body.confirm == "on" ? 1 : 0;
     // console.log(req.body); //form data => title
-
+    
     try{
         // await db.execute("INSERT INTO blog(baslig,aciglama,image,homePage,confirm,categoryid,altbaslig) VALUES (?,?,?,?,?,?,?)" , [title , aciglama, image, homepage, confirm, category,altbaslig]);
         await Blog.create({
             baslig:title,
-            url: slugField(baslig),
+            url: slugField(title),
             altbaslig:altbaslig,
             aciglama:aciglama,
             image:image,
@@ -303,7 +303,7 @@ exports.get_blogs = async (req, res) => {
                 attributes:["name"] //BU yazilisda bloglarla category cedvelini birlesdirir ve categorynin sadece name hissesini gotururuk
              }
             });
-        console.log(blogs); 
+        // console.log(blogs); 
         res.render("admin/blog-list", {
             title: "Blog List", 
             blogs: blogs,

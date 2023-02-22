@@ -4,33 +4,6 @@ const Category = require("../models/category");
 const { Op } = require("sequelize");
 
 
-exports.blogs_by_category = async (req, res) =>{
-    const slug = req.params.slug;
-    try{
-        const blogs = await Blog.findAll({
-            where: {
-                confirm: true
-            },
-            include: {
-                model: Category,
-                where: {url: slug}
-            },
-            raw: true
-        });
-        const categories = await Category.findAll({raw: true});
-        // console.log(blogs[0]);
-        res.render("users/blogs" , {
-            title: "Courses",
-            categories: categories,
-            blogs: blogs,
-            selectedcategory: slug
-        });
-    }
-    catch(err) {
-        console.log(err);   
-    }
-}
-
 exports.blog_details = async (req, res, next) => {
     // console.log(__dirname);
     // console.log(__filename);
@@ -61,22 +34,32 @@ exports.blog_details = async (req, res, next) => {
 }
 
 exports.blog_list =  async (req, res) => {
+    const size = 3;
+    const { page = 0 } = req.query;
+    const slug = req.params.slug;
+
     try{
-        const blogs = await Blog.findAll({
+        const { rows , count } = await Blog.findAndCountAll({
             where: {
                 confirm: {
                     [Op.eq]: true // operator yardimi ile confirm=1 yazirig
                 }
             },
-            raw: true
+            raw: true,
+            include: slug ? {model: Category, where: {url: slug}} : null,
+            limit: size,
+            offset: page * size
         })
         const categories = await Category.findAll({raw: true});
         // console.log(blogs[0]);
         res.render("users/blogs" , {
             title: "All Courses",
             categories: categories,
-            blogs: blogs,
-            selectedcategory: null
+            blogs: rows,
+            totalItems: count,
+            totalPages: Math.ceil(count / size),
+            currentPage: page,
+            selectedcategory: slug
         });
     }
     catch(err) {
@@ -85,6 +68,7 @@ exports.blog_list =  async (req, res) => {
 }
 
 exports.index = async (req, res) => {
+    console.log(req.cookies);
     try{
         const blogs = await Blog.findAll({
             where: {
