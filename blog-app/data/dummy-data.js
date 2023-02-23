@@ -12,6 +12,16 @@ const populate = async() => {
 
     if(count == 0){
 
+        const users = await User.bulkCreate([
+            {fullname: "kamran", email: "bytalibli2@gmail.com", password: await bcrypt.hash("135790", 10)},
+            {fullname: "kerim", email: "kerim@gmail.com", password: await bcrypt.hash("135790", 10)}
+        ]);
+
+        // const role = await Role.bulkCreate([
+        //     {}
+        // ])
+        
+
         const categories = await Category.bulkCreate([
             {name: "Web Development",url: slugField("Web Development")},
             {name: "Ios Development",url: slugField("Ios Development")},
@@ -102,10 +112,6 @@ const populate = async() => {
             }
         ]);
 
-        const users = await User.bulkCreate([
-            {fullname: "kamran", email: "bytalibli2@gmail.com", password: await bcrypt.hash("135790", 10)},
-            {fullname: "kerim", email: "kerim@gmail.com", password: await bcrypt.hash("135790", 10)}
-        ]);
 
         await categories[0].addBlog(blogs[0]);
         await categories[0].addBlog(blogs[1]);
