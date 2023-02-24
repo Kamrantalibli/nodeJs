@@ -68,7 +68,7 @@ exports.blog_list =  async (req, res) => {
 }
 
 exports.index = async (req, res) => {
-    console.log(req.cookies);
+    // console.log(req.cookies);
     try{
         const blogs = await Blog.findAll({
             where: {

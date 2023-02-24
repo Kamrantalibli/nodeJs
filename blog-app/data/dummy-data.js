@@ -3,6 +3,7 @@ const Category = require("../models/category");
 const slugField = require("../helpers/slugfield");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const Role = require("../models/role");
 
 
 const populate = async() => {
@@ -14,12 +15,26 @@ const populate = async() => {
 
         const users = await User.bulkCreate([
             {fullname: "kamran", email: "bytalibli2@gmail.com", password: await bcrypt.hash("135790", 10)},
-            {fullname: "kerim", email: "kerim@gmail.com", password: await bcrypt.hash("135790", 10)}
+            {fullname: "kerim", email: "kerim@gmail.com", password: await bcrypt.hash("135790", 10)},
+            {fullname: "nurlan", email: "nurlan@gmail.com", password: await bcrypt.hash("135790", 10)},
+            {fullname: "kenan", email: "kenan@gmail.com", password: await bcrypt.hash("135790", 10)},
+            {fullname: "nihad", email: "nihad@gmail.com", password: await bcrypt.hash("135790", 10)}
         ]);
 
-        // const role = await Role.bulkCreate([
-        //     {}
-        // ])
+        const roles = await Role.bulkCreate([
+            {rolename: "admin"},
+            {rolename: "moderator"},
+            {rolename: "guest"}
+        ])
+
+        await users[0].addRole(roles[0]); // admin => kamran
+        
+        await users[0].addRole(roles[1]); // moderator => kamran
+        await users[1].addRole(roles[1]); // moderator => kerim
+        await users[2].addRole(roles[1]); // moderator => nurlan
+        
+        await users[3].addRole(roles[2]); // guest => kenan
+        await users[4].addRole(roles[2]); // guest => nihad
         
 
         const categories = await Category.bulkCreate([

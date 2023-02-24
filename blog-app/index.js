@@ -7,7 +7,7 @@ app.setMaxListeners = Infinity;
 const cookieParser = require("cookie-parser"); //insert cookieParser
 const session = require("express-session"); //insert express-session
 const SequelizeStore = require("connect-session-sequelize")(session.Store); //insert session-sequelize
-const csurf = require("csurf");
+const csrf = require("csurf"); //Token (Cross Site Request Forgery) 
 
 // Node modules
 const path = require("path");
@@ -29,9 +29,10 @@ app.set("view engine", "ejs");
 const Category = require("./models/category");
 const Blog = require("./models/blog");
 const User = require("./models/user");
+const Role = require("./models/role");
 
 // Middleware
-app.use(express.urlencoded({ extended: false })); //request body icindeki name leri oxumaq ucun istifade olunur
+app.use(express.urlencoded({ extended: true })); //request body icindeki name leri oxumaq ucun istifade olunur 
 app.use(cookieParser()); // CookieParser use
 app.use(
   session({
@@ -48,7 +49,7 @@ app.use(
 );
 
 app.use(locals); // -> Middleware butun her yerde istifade olunur.
-app.use(csurf());
+app.use(csrf());
 
 app.use("/libs", express.static(path.join(__dirname, "node_modules")));
 app.use("/static", express.static(path.join(__dirname, "public")));
@@ -64,8 +65,8 @@ User.hasMany(Blog);
 Blog.belongsToMany(Category, { through: "blogCategories" });
 Category.belongsToMany(Blog, { through: "blogCategories" });
 
-// Role.belongsToMany(User, {through: "userRoles"});
-// User.belongsToMany(Role, {through: "userRoles"});
+Role.belongsToMany(User, {through: "userRoles"});
+User.belongsToMany(Role, {through: "userRoles"});
 //implementation - sync
 
 // IIFE
