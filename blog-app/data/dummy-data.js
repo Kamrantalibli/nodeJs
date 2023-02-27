@@ -29,7 +29,6 @@ const populate = async() => {
 
         await users[0].addRole(roles[0]); // admin => kamran
         
-        await users[0].addRole(roles[1]); // moderator => kamran
         await users[1].addRole(roles[1]); // moderator => kerim
         await users[2].addRole(roles[1]); // moderator => nurlan
         
@@ -51,7 +50,8 @@ const populate = async() => {
                 aciglama: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias totam ipsam eum temporibus libero ut, aspernatur doloremque. Dignissimos blanditiis earum quidem assumenda consectetur cumque esse possimus facere, animi doloremque?",
                 image: "1.jpeg",
                 homepage: true,
-                confirm: true
+                confirm: true,
+                userId:2
             },
             {
                 baslig: "Zero to Advanced JavaScript Course",
@@ -60,7 +60,8 @@ const populate = async() => {
                 aciglama: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel est harum eos non blanditiis id nesciunt, rerum deleniti quia veniam cumque vitae quo, repellendus dolores optio labore expedita animi. Voluptatum consectetur neque ratione sit accusantium repellat aliquam libero? Labore, libero?",
                 image: "2-1677045413425.jpeg",
                 homepage: true,
-                confirm: true
+                confirm: true,
+                userId:2
             },
             {
                 baslig: "Zero to Advanced Phyton Course",
@@ -69,7 +70,8 @@ const populate = async() => {
                 aciglama: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel est harum eos non blanditiis id nesciunt, rerum deleniti quia veniam cumque vitae quo, repellendus dolores optio labore expedita animi. Voluptatum consectetur neque ratione sit accusantium repellat aliquam libero? Labore, libero?",
                 image: "3.jpeg",
                 homepage: true,
-                confirm: true
+                confirm: true,
+                userId:2
             },
             {
                 baslig: "Zero to Advanced ReactJs Course",
@@ -78,7 +80,8 @@ const populate = async() => {
                 aciglama: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel est harum eos non blanditiis id nesciunt, rerum deleniti quia veniam cumque vitae quo, repellendus dolores optio labore expedita animi. Voluptatum consectetur neque ratione sit accusantium repellat aliquam libero? Labore, libero?",
                 image: "4.jpeg",
                 homepage: true,
-                confirm: true
+                confirm: true,
+                userId:2
             },
             {
                 baslig: "Zero to Advanced ReactJs Course",
@@ -87,7 +90,8 @@ const populate = async() => {
                 aciglama: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel est harum eos non blanditiis id nesciunt, rerum deleniti quia veniam cumque vitae quo, repellendus dolores optio labore expedita animi. Voluptatum consectetur neque ratione sit accusantium repellat aliquam libero? Labore, libero?",
                 image: "4.jpeg",
                 homepage: true,
-                confirm: true
+                confirm: true,
+                userId:3
             },
             {
                 baslig: "Zero to Advanced ReactJs Course",
@@ -96,7 +100,8 @@ const populate = async() => {
                 aciglama: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel est harum eos non blanditiis id nesciunt, rerum deleniti quia veniam cumque vitae quo, repellendus dolores optio labore expedita animi. Voluptatum consectetur neque ratione sit accusantium repellat aliquam libero? Labore, libero?",
                 image: "4.jpeg",
                 homepage: true,
-                confirm: true
+                confirm: true,
+                userId:3
             },
             {
                 baslig: "Zero to Advanced ReactJs Course",
@@ -105,7 +110,8 @@ const populate = async() => {
                 aciglama: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel est harum eos non blanditiis id nesciunt, rerum deleniti quia veniam cumque vitae quo, repellendus dolores optio labore expedita animi. Voluptatum consectetur neque ratione sit accusantium repellat aliquam libero? Labore, libero?",
                 image: "4.jpeg",
                 homepage: true,
-                confirm: true
+                confirm: true,
+                userId:3
             },
             {
                 baslig: "Zero to Advanced ReactJs Course",
@@ -114,7 +120,8 @@ const populate = async() => {
                 aciglama: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel est harum eos non blanditiis id nesciunt, rerum deleniti quia veniam cumque vitae quo, repellendus dolores optio labore expedita animi. Voluptatum consectetur neque ratione sit accusantium repellat aliquam libero? Labore, libero?",
                 image: "4.jpeg",
                 homepage: true,
-                confirm: true
+                confirm: true,
+                userId:3
             },
             {
                 baslig: "Zero to Advanced ReactJs Course",
@@ -123,7 +130,8 @@ const populate = async() => {
                 aciglama: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel est harum eos non blanditiis id nesciunt, rerum deleniti quia veniam cumque vitae quo, repellendus dolores optio labore expedita animi. Voluptatum consectetur neque ratione sit accusantium repellat aliquam libero? Labore, libero?",
                 image: "4.jpeg",
                 homepage: true,
-                confirm: true
+                confirm: true,
+                userId:3
             }
         ]);
 

@@ -26,7 +26,7 @@ exports.blog_details = async (req, res, next) => {
                     blog: blog
                     });
         }
-        res.redirect("/");
+        res.redirect("/404");
     }
     catch(err){
         console.log(err);

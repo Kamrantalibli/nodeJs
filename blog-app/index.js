@@ -21,6 +21,8 @@ const authRoutes = require("./routes/auth");
 const sequelize = require("./data/db");
 const dummyData = require("./data/dummy-data");
 const locals = require("./middleware/locals");
+const log = require("./middleware/log");
+const error = require("./middleware/error-handling");
 
 // Template engine
 app.set("view engine", "ejs");
@@ -57,6 +59,11 @@ app.use("/static", express.static(path.join(__dirname, "public")));
 app.use("/admin", adminRoutes);
 app.use("/account", authRoutes);
 app.use(userRoutes);
+app.use("*", (req,res) => {
+    res.status(404).render("error/404" , { title: "Not Found" })
+})
+app.use(log);
+app.use(error);
 
 // Relations
 Blog.belongsTo(User);

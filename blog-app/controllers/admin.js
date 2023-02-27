@@ -9,9 +9,14 @@ const slugField = require("../helpers/slugfield");
 
 exports.get_blog_delete = async (req,res) => {
     const blogid = req.params.blogid;
+    const userid = req.session.userid;
+    const isAdmin = req.session.roles.includes("admin");
+
 
     try {
-        const blog = await Blog.findByPk(blogid);
+        const blog = await Blog.findOne({
+           where: isAdmin ? {id: blogid} : { id: blogid, userId: userid }
+        });
         if (blog) {
             return res.render("admin/blog-delete" , {
                 title: "Delete blog",
@@ -97,12 +102,28 @@ exports.post_blog_create = async (req ,res) => {
     const title = req.body.title;
     const altbaslig = req.body.altbaslig;
     const aciglama = req.body.aciglama;
-    const image = req.file.filename;  //file yuklemek ucun npm multer lazimdi. Ondan sonra ise req.file yazmaliyig
+    // const image = req.file.filename;  //file yuklemek ucun npm multer lazimdi. Ondan sonra ise req.file yazmaliyig
     const homepage = req.body.homepage == "on" ? 1 : 0;
     const confirm = req.body.confirm == "on" ? 1 : 0;
+    const userid = req.session.userid
+    const image = ""
     // console.log(req.body); //form data => title
     
     try{
+        if(title == ""){
+            throw new Error("Title can not be empty");
+        }
+        if(title.length <5 || title.length > 20){
+            throw new Error("Title must be 5-20 characters")
+        }
+        if(aciglama == ""){
+            throw new Error("Aciglama can not be empty");
+        }
+        if(req.file){
+            image = req.file.filename;
+
+            fs.unlink("./public/images/" + req.body.image, err => console.log(err))
+        }
         // await db.execute("INSERT INTO blog(baslig,aciglama,image,homePage,confirm,categoryid,altbaslig) VALUES (?,?,?,?,?,?,?)" , [title , aciglama, image, homepage, confirm, category,altbaslig]);
         await Blog.create({
             baslig:title,
@@ -112,11 +133,27 @@ exports.post_blog_create = async (req ,res) => {
             image:image,
             homepage:homepage,
             confirm:confirm,
+            userId:userid
         });
          res.redirect("/admin/blogs?action=create");
     }
     catch(err){
-        console.log(err);
+        let errmessage = "";
+
+        if(err instanceof Error){
+            errmessage += err.message;
+
+            res.render("admin/blog-create", {
+                title: "Add Blog",
+                categories: await Category.findAll(),
+                message: {text: errmessage , class: "danger"},
+                values: {
+                    baslig: title,
+                    altbaslig: altbaslig,
+                    aciglama: aciglama
+                }
+            });
+        }
     }
 }
 
@@ -146,12 +183,12 @@ exports.post_category_create = async (req ,res) => {
 
 exports.get_blog_edit = async (req, res) => {
     const blogid = req.params.blogid;
+    const userid = req.session.userid;
+    const isAdmin = req.session.roles.includes("admin");
     try {
         // const [blogs, ] = await db.execute("select * from blog where blogid = ?" , [blogid]);
         const blog = await Blog.findOne({
-            where: {
-                id: blogid
-            },
+            where: isAdmin ? {id: blogid} : { id: blogid, userId: userid },
             include: {
                 model: Category,
                 attributes: ["id"]
@@ -167,7 +204,7 @@ exports.get_blog_edit = async (req, res) => {
                 categories: categories
             });
         }
-        res.redirect("admin/blogs");
+        res.redirect("/admin/blogs");
     } 
     catch (err) {
         console.log(err);
@@ -182,6 +219,8 @@ exports.post_blog_edit = async (req,res)=>{
     const kategoriIds = req.body.categories;
     let image = req.body.image;
     const url = req.body.url;
+    const userid = req.session.userid;
+
 
     if(req.file) {
         image = req.file.filename;
@@ -194,11 +233,11 @@ exports.post_blog_edit = async (req,res)=>{
     const homepage = req.body.homepage == "on" ? 1 : 0;
     const confirm = req.body.confirm == "on" ? 1 : 0;
 
+    const isAdmin = req.session.roles.includes("admin");
+
     try{
         const blog = await Blog.findOne({
-            where: {
-                id: blogid
-            },
+           where: isAdmin ? {id: blogid} : { id: blogid, userId: userid },
             include: {
                 model: Category,
                 attributes: ["id"]
@@ -296,6 +335,9 @@ exports.post_category_edit = async (req,res)=>{
 }
 
 exports.get_blogs = async (req, res) => {
+    const userid = req.session.userid;
+    const isModerator = req.session.roles.includes("moderator");
+    const isAdmin = req.session.roles.includes("admin");
     try{
         // const [blogs ,] = await db.execute("select blogid,baslig,altbaslig,image from blog");
         const blogs = await Blog.findAll({
@@ -303,7 +345,8 @@ exports.get_blogs = async (req, res) => {
              include: {
                 model: Category,
                 attributes:["name"] //BU yazilisda bloglarla category cedvelini birlesdirir ve categorynin sadece name hissesini gotururuk
-             }
+             },
+             where: isModerator && !isAdmin ? { userId: userid } : null
             });
         // console.log(blogs); 
         res.render("admin/blog-list", {

@@ -5,7 +5,7 @@ const authController = require("../controllers/auth");
 const csrf = require("../middleware/csrf");
 
 router.get("/register", csrf, authController.get_register);
-router.post("/register", authController.post_register);
+router.post("/register", csrf , authController.post_register);
 
 router.get("/login", csrf, authController.get_login);
 router.post("/login", csrf, authController.post_login);

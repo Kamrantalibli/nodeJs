@@ -5,41 +5,41 @@ const config = require("../config");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
 
-exports.get_register = async (req, res) => {
+exports.get_register = async (req, res, next) => {
   try {
     return res.render("auth/register", {
       title: "Register",
     });
   } catch (err) {
-    console.log(err);
+      next(err);
   }
 };
 
-exports.post_register = async (req, res) => {
+exports.post_register = async (req, res, next) => {
   const name = req.body.name;
   const email = req.body.email;
   const password = req.body.password;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  // const hashedPassword = await bcrypt.hash(password, 10);
   try {
-    const user = await User.findOne({ where: { email: email } });
-    if (user) {
-      req.session.message = {
-        text: "An account has been created with email",
-        class: "warning",
-      };
-      return res.redirect("login");
-    }
+    // const user = await User.findOne({ where: { email: email } });
+    // if (user) {
+    //   req.session.message = {
+    //     text: "An account has been created with email",
+    //     class: "warning",
+    //   };
+    //   return res.redirect("login");
+    // }
     await User.create({
       fullname: name,
       email: email,
-      password: hashedPassword,
+      password: password,
     });
 
     transporter.sendMail({
       from: config.email.username,
       to: email,
-      subject: "An account has been created",
+      subject: "An account created",
       text: "this is a test email sent from Node.js using Nodemailer.",
     });
 
@@ -49,11 +49,22 @@ exports.post_register = async (req, res) => {
     };
     return res.redirect("login");
   } catch (err) {
-    console.log(err);
+      let msg = "";
+      if (err.name == "SequelizeValidationError" || err.name == "SequelizeUniqueConstraintError") {
+          for(let e of err.errors){
+            msg += e.message + " "
+          };
+          return res.render("auth/register", {
+            title: "Register",
+            message: {text: msg , class: "warning"}
+          });
+      }else{
+          next(err);
+      }
   }
 };
 
-exports.get_login = async (req, res) => {
+exports.get_login = async (req, res, next) => {
   const message = req.session.message;
   delete req.session.message;
   try {
@@ -62,20 +73,20 @@ exports.get_login = async (req, res) => {
       message: message,
     });
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
-exports.get_logout = async (req, res) => {
+exports.get_logout = async (req, res, next) => {
   try {
     req.session.destroy();
     return res.redirect("/account/login");
   } catch (err) {
-    console.log(err);
+    next(err);
   }
 };
 
-exports.post_login = async (req, res) => {
+exports.post_login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   try {
@@ -97,10 +108,14 @@ exports.post_login = async (req, res) => {
     if (match) {
       // Login succes
       // session
+      const userRoles = await user.getRoles({
+        attributes:["rolename"],
+        raw: true
+      })
+      req.session.roles = userRoles.map((role) => role["rolename"]); // ["admin","moderator"]
       req.session.isAuth = true;
       req.session.fullname = user.fullname;
-      // session in db
-      // token-based auth - api
+      req.session.userid = user.id;
       const url = req.query.returnUrl ? req.query.returnUrl : "/";
       return res.redirect(url);
     }
@@ -111,11 +126,11 @@ exports.post_login = async (req, res) => {
       message: { text: "Email or password wrong", class: "danger" },
     });
   } catch (err) {
-    console.log(err);
+      next(err);
   }
 };
 
-exports.get_reset = async (req, res) => {
+exports.get_reset = async (req, res, next) => {
   const message = req.session.message;
   delete req.session.message;
   try {
@@ -124,7 +139,7 @@ exports.get_reset = async (req, res) => {
       message: message,
     });
   } catch (err) {
-    console.log(err);
+      next(err);
   }
 };
 

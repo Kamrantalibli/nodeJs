@@ -32,7 +32,14 @@ const Blog = sequelize.define("blog",{
     }
 },
 {
-    timestamps: true
+    timestamps: true,
+    validate: {
+        checkedValidConfirm(){  //burada value yazilmir cunki datalar ile eyni seviyyededi ve this ile yazilir 
+            if(this.homepage && !this.confirm){
+                throw new Error("The blog you have taken to the homepage has not been confirm.");
+            }
+        }
+    }
 });
 
 module.exports = Blog

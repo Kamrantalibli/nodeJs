@@ -10,11 +10,18 @@
     <div class="container mt-3">
         <div class="row">
             <div class="col-md-12 mt-3">
+
+                <% if (typeof message != "undefined") { %>
+                    <div class="alert alert-<%= message.class %>">
+                        <%= message.text %>
+                    </div>
+                <% } %>
+
                 <form method="post" enctype="multipart/form-data" action="/admin/blog/create?_csrf=<%= csrfToken %>">
                     <div class="row mb-3">
                         <label for="title" class="col-sm-2 col-form-label">Title</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" name="title">
+                            <input type="text" class="form-control" id="title" name="title" value="<%= (typeof values != "undefined") ? values.baslig : "" %>">
                         </div>
                     </div>
                     <div class="row mb-3">
