@@ -222,7 +222,7 @@ exports.post_blog_edit = async (req,res)=>{
     const userid = req.session.userid;
 
 
-    if(req.file) {
+    if(req.file) {  
         image = req.file.filename;
 
         fs.unlink("./public/images/" + req.body.image, err => {
