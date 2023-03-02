@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../data/db");
 
-const Blog = sequelize.define("blog",{
+const Blog = sequelize.define('blog',{
     baslig: {
         type: DataTypes.STRING,
         allowNull:false
