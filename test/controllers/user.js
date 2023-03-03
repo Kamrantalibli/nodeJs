@@ -1,5 +1,6 @@
 const db = require("../data/db");
 const { querySync } = require("../data/query");
+
 exports.get_blog = async (req, res, next) => {
   try {
     const [blogs] = await db.execute("select * from blog where status=1");

@@ -2,6 +2,7 @@ const config = require("../config");
 const db = require("../data/db");
 const bcrypt = require("bcrypt");
 const  transporter  = require("../helpers/send-mail");
+const jwt = require("jsonwebtoken");
 
 exports.post_register = async (req,res,next) => {
     const {name,email,password} = req.body;
@@ -29,8 +30,7 @@ exports.post_register = async (req,res,next) => {
 }
 
 exports.post_login = async (req,res,next) => {
-    const email = req.body.email;
-    const password = req.body.password;
+    const {email, password} = req.body;
 
     try {
         // Email control
@@ -44,16 +44,18 @@ exports.post_login = async (req,res,next) => {
             console.log(match);
             if (match) {
                 //Login Success
-
+                const token = jwt.sign({
+                    email:email,
+                    userid: user[0].id,
+                    exp: Math.floor(Date.now() / 1000)+60
+                },process.env.SECRET_KEY)
                 //session
                 req.session.isAuth = true;
                 req.session.fullname = user[0].fullname;
                 req.session.userid = user[0].id;
                 return res.json({ 
+                    token: token,
                     message: "Success", 
-                    isAuth: req.session.isAuth,
-                    fullname: req.session.fullname,
-                    userid: req.session.userid
                 });
             }
             else{
@@ -85,14 +87,14 @@ exports.get_reset = async (req, res, next) => {
     const message = req.session.message;
     delete req.session.message
     try {
-        return res.json({message: message , title: "Reset Password"})
+        return res.json({message: message , title: "Reset Password"});
     } catch (err) {
         next(err);
     }
 }
 
 exports.post_reset = async (req, res, next) => {
-    const email = req.body.email;
+    const { email } = req.body;
 
     try {
         const [user , ] = await db.execute("SELECT * FROM users where email = ? " , [email]);
@@ -102,7 +104,23 @@ exports.post_reset = async (req, res, next) => {
             return res.json({message: req.session.message});
         }
         else{
+            
 
+            transporter.sendMail({
+                from: config.email.username,
+                to: email,
+                subject: "New Password",
+                html: `
+                    <p>Click Reset Pssword</p>
+                    <a href="http://localhost:3000/account/new-password">Reset Password</a>                
+                `
+            });
+
+            req.session.message = "Reset-Password sent to your email"
+            return res.status(200).json({
+                message:req.session.message , 
+                status:200 , 
+                method:"POST"});
         }
     } catch (err) {
         next(err);

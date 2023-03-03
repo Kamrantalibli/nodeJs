@@ -3,6 +3,7 @@ const express = require("express");
 const port = 3000;
 const app = express();
 const cors = require("cors");
+require('dotenv').config();
 
 app.setMaxListeners = Infinity;
 const session = require("express-session"); //insert express-session
