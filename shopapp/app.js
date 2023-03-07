@@ -7,8 +7,8 @@ const mongoose = require("mongoose");
 
 const products = require("./routes/products");
 const categories = require("./routes/categories");
+const users = require("./routes/users");
 const home = require("./routes/home");
-const { number, date } = require("joi");
 
 app.use(express.json());
 // http methods: get, post, put, delete
@@ -23,6 +23,7 @@ app.use(cors({origin: "*", methods:["GET"]}))
 
 app.use("/api/products" ,products);
 app.use("/api/categories" ,categories);
+app.use("/api/users" ,users);
 app.use("/" , home);
 
 const username = "kamrantalibli";

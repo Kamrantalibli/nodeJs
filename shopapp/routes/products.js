@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+const auth = require("../middleware/auth");
+const isAdmin = require("../middleware/isAdmin");
+
 const { Product, Comment , validateProduct } = require("../models/product"); 
 
 const products = [
@@ -48,7 +51,7 @@ router.get("/", async (req, res) => {
   res.json(products);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", [ auth, isAdmin ] , async (req, res) => {
   //Validate
   const { error } = validateProduct(req.body);
 
@@ -70,7 +73,7 @@ router.post("/", async (req, res) => {
     res.json(newProduct);
 });
 
-router.post("/comment/:id", async (req, res) => {
+router.post("/comment/:id", auth , async (req, res) => {
   const product = await Product.findById(req.params.id)
   if (!product) {
       return res.status(404).send("Product is not defined. ");
@@ -90,7 +93,7 @@ router.post("/comment/:id", async (req, res) => {
     res.json(updatedProduct);
 });
 
-router.delete("/comment/:id", async (req, res) => {
+router.delete("/comment/:id", auth , async (req, res) => {
   const product = await Product.findById(req.params.id);
     if(!product) {
         return res.status(404).send("Product is not defined.");
@@ -105,12 +108,12 @@ router.delete("/comment/:id", async (req, res) => {
   res.json(updatedProduct);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth , async (req, res) => {
   // // id -e gore product almaq
   // const product = products.find((p) => p.id == req.params.id);
 
 
-  // // 1 ci update methodu
+  // // 1 ci update methodu///////////////////////////////////////////////////////////////
   // const product = await Product.findByIdAndUpdate({ _id: req.params.id }, {
   //   $set: {
   //     name: req.body.name,
@@ -122,11 +125,11 @@ router.put("/:id", async (req, res) => {
   // }, {new: true});
 
   // res.json(product); // Burada res => update olunan itemin kecmis melumatlari gelir. Eger yeni melumatlarinin gelmesini isteyirikse 3cu parametr kimi {new: true} yazirig.
-  // //
+  /////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-  // // 2 ci update methodu
+  // // 2 ci update methodu////////////////////////////////////////////////////////////////
   // const result = await Product.update({ _id: req.params.id }, {
   //   $set: {
   //     name: req.body.name,
@@ -138,11 +141,11 @@ router.put("/:id", async (req, res) => {
   // });
 
   // res.json(result); // Burada res => update olunan item sayi gelecek
-  // //
+  /////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-// 3 ci update methodu
+// 3 ci update methodu/////////////////////////////////////////////////////////////////////
   const product = await Product.findById(req.params.id);
 
   if (!product) {
@@ -165,10 +168,10 @@ router.put("/:id", async (req, res) => {
 
   const updatedProduct = await product.save();
   res.json(updatedProduct);
-//
+///////////////////////////////////////////////////////////////////////////////////////////
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth , async (req, res) => {
 
   // const result = await Product.deleteOne({ _id: req.params.id }); // 1ci method. Bu methodda seyfeye silinen itemlerin sayi gonderilir.
   const product = await Product.findByIdAndDelete(req.params.id); // 2ci method. Bu methodda seyfeye silinen product gonderilir.
